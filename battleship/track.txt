@@ -1,0 +1,5 @@
+We have slides for every ship
+During a hit we try to overlay ship profile over the hit
+After that when we try to choose a hit we choose it via the net prob of all the slides
+
+During a sinking, we delte that slide as well as overlays on those spots in other slides
