@@ -6,14 +6,14 @@ from smartv2 import *
 from ship import *
 
 ships={}
-##ships["sloop"]=ship(1,2,np.ones((1,2)))
-##ships["men-of-war"]=ship(1,4,np.ones((1,4)))
-##ships["cutter"]=ship(1,3,np.ones((1,3)))
-##ships["alien"]=ship(1,5,np.ones((1,5)))
-
-ships={}
 ships["sloop"]=ship(1,2,np.ones((1,2)))
 ships["men-of-war"]=ship(1,4,np.ones((1,4)))
+ships["cutter"]=ship(1,3,np.ones((1,3)))
+ships["alien"]=ship(1,5,np.ones((1,5)))
+
+##ships={}
+##ships["sloop"]=ship(1,2,np.ones((1,2)))
+##ships["men-of-war"]=ship(1,4,np.ones((1,4)))
 
 
 board=board(10,10,ships)

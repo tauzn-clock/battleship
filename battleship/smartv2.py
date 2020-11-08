@@ -34,7 +34,7 @@ class smart:
                         for i_2 in range(a,b+1):
                             for j_2 in range(c,d+1):
                                 if (ship[i_2-a][j_2-c]==1):
-                                    self.target_list[i_2][j_2]+=p
+                                    self.target_list[i_2][j_2]+=p                                
 
     
     def populate_target_list(self):
@@ -77,6 +77,8 @@ class smart:
         self.pt=0
         self.ship_sunk=0
         self.hit_list=np.ones((self.x,self.y))
+
+        self.hit_yes=np.zeros((self.x,self.y))
 
     def biggest_2d(self,arr):
         (X,Y)=arr.shape
@@ -125,9 +127,42 @@ class smart:
                             for j_2 in range(c,d+1):
                                 if (ship[i_2-a][j_2-c]==1):
                                     self.prob_tot[i_2][j_2]+=p
-                                    self.prob_list[n][i_2][j_2]+=p
-                        
+                                    self.prob_list[n][i_2][j_2]+=p                        
 
+    def special_check(self,arr1,arr2,a,b,c,d):
+        (X,Y)=arr1.shape
+        if (a<0): return False
+        if (b>=X):return False
+        if (c<0): return False
+        if (d>=Y):return False
+        bo=False
+        for i in range(a,b+1):
+            for j in range(c,d+1):
+                #Ideally should -inf, we need to check
+                if (arr1[i][j]<0 and arr2[i-a][j-c]==1):
+                    return False
+                if (self.hit_yes[i][j]==1 and arr2[i-a][j-c]==1):
+                    bo=True
+        return bo
+
+    def special_overlay(self,n,d,x,y,p):
+        ship=np.rot90(self.ship[self.name_list[n]].shape,d)
+        (x_d,y_d)=ship.shape
+        
+        for i in range(x_d):
+            for j in range(y_d):
+                if (ship[i][j]==1):
+                    a=x-i
+                    b=x-i+x_d-1
+                    c=y-j
+                    d=y-j+y_d-1
+                    if (self.special_check(self.prob_tot,ship,a,b,c,d)):
+                        for i_2 in range(a,b+1):
+                            for j_2 in range(c,d+1):
+                                if (ship[i_2-a][j_2-c]==1):
+                                    self.prob_tot[i_2][j_2]+=p
+                                    self.prob_list[n][i_2][j_2]+=p 
+    
     def read_outcome(self,val):
         for i in range(self.x): print(self.target_list[i])
         for i in range(self.x): print(self.prob_tot[i])
@@ -140,7 +175,7 @@ class smart:
                 for i in range(len(self.ship)):
                     if (self.cnt_list[i]!=0):
                         for direction in range(4):
-                            self.overlay(i,direction,self.last_x,self.last_y,-1)
+                            self.special_overlay(i,direction,self.last_x,self.last_y,-1)
             else:
                 for i in range(len(self.ship)):
                     if (self.cnt_list[i]!=0):
@@ -149,13 +184,14 @@ class smart:
             self.prob_tot[self.last_x][self.last_y]=-np.inf
             self.target_list[self.last_x][self.last_y]=-np.inf
         if (val[0]==1):
-
+            self.hit_yes[self.last_x][self.last_y]=1
             for i in range(len(self.ship)):
                 if (self.cnt_list[i]!=0):
                     for direction in range(4):
                         self.overlay(i,direction,self.last_x,self.last_y,1)
             
         if (val[0]==2):
+            self.hit_yes[self.last_x][self.last_y]=1
             for i in range(len(self.ship)):
                 if (self.cnt_list[i]!=0):
                     for direction in range(4):

@@ -98,8 +98,8 @@ class dumb_track:
                         for i_2 in range(a,b+1):
                             for j_2 in range(c,d+1):
                                 if (ship[i_2-a][j_2-c]==1):
-                                    self.prob_tot[i_2][j_2]+=p
-                                    self.prob_list[n][i_2][j_2]+=p
+                                    self.prob_tot[i_2][j_2]=max(0,self.prob_tot[i_2][j_2]+p)
+                                    self.prob_list[n][i_2][j_2]=max(0,self.prob_tot[i_2][j_2]+p)
                         
 
     def read_outcome(self,val):
