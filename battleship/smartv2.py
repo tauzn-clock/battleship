@@ -30,21 +30,37 @@ class smart:
                     b=x-i+x_d-1
                     c=y-j
                     d=y-j+y_d-1
-                    if (a>=0 and b<self.x and c>=0 and d<self.y):
+                    if (self.check(self.target_list,ship,a,b,c,d)):
                         for i_2 in range(a,b+1):
                             for j_2 in range(c,d+1):
                                 if (ship[i_2-a][j_2-c]==1):
                                     self.target_list[i_2][j_2]+=p                                
 
+
+    def one_overlay_target_list(self,n,d,x,y,p):
+        ship=np.rot90(self.ship[self.name_list[n]].shape,d)
+        (x_d,y_d)=ship.shape
+        
+        for i in range(1):
+            for j in range(1):
+                if (ship[i][j]==1):
+                    a=x-i
+                    b=x-i+x_d-1
+                    c=y-j
+                    d=y-j+y_d-1
+                    if (self.check(self.target_list,ship,a,b,c,d)):
+                        for i_2 in range(a,b+1):
+                            for j_2 in range(c,d+1):
+                                if (ship[i_2-a][j_2-c]==1):
+                                    self.target_list[i_2][j_2]+=p
     
     def populate_target_list(self):
         for ship in range(len(self.ship)):
             for x in range(self.x):
                 for y in range(self.y):
                     for direction in range(4):
-                        self.overlay_target_list(ship,direction,x,y,1)
+                        self.one_overlay_target_list(ship,direction,x,y,1)
                     
-        
     def __init__(self,x,y,ships):
         self.x=x
         self.y=y
@@ -164,23 +180,23 @@ class smart:
                                     self.prob_list[n][i_2][j_2]+=p 
     
     def read_outcome(self,val):
-        for i in range(self.x): print(self.target_list[i])
-        for i in range(self.x): print(self.prob_tot[i])
+        #for i in range(self.x): print(self.prob_tot[i])
         for i in range(len(self.ship)):
             if (self.cnt_list[i]!=0):
                 for direction in range(4):
                     self.overlay_target_list(i,direction,self.last_x,self.last_y,-1)
+        self.target_list[self.last_x][self.last_y]=-np.inf
         if (val[0]==0):
             if (self.TRACKING==True):
                 for i in range(len(self.ship)):
                     if (self.cnt_list[i]!=0):
                         for direction in range(4):
                             self.special_overlay(i,direction,self.last_x,self.last_y,-1)
-            else:
-                for i in range(len(self.ship)):
-                    if (self.cnt_list[i]!=0):
-                        for direction in range(4):
-                            self.overlay_target_list(i,direction,self.last_x,self.last_y,-1)
+            else: pass
+##                for i in range(len(self.ship)):
+##                    if (self.cnt_list[i]!=0):
+##                        for direction in range(4):
+##                            self.overlay_target_list(i,direction,self.last_x,self.last_y,-1)
             self.prob_tot[self.last_x][self.last_y]=-np.inf
             self.target_list[self.last_x][self.last_y]=-np.inf
         if (val[0]==1):
@@ -191,6 +207,7 @@ class smart:
                         self.overlay(i,direction,self.last_x,self.last_y,1)
             
         if (val[0]==2):
+
             self.hit_yes[self.last_x][self.last_y]=1
             for i in range(len(self.ship)):
                 if (self.cnt_list[i]!=0):
@@ -205,17 +222,20 @@ class smart:
                     for direction in range(4):
                         for coord in val[2]:
                             self.overlay(i,direction,coord[0],coord[1],-1)
-            for i in range(self.x):
-                for j in range(self.y):
-                    if (self.hit_list[i][j]==1):
-                        for direction in range(4):
-                            self.overlay_target_list(val[1],direction,i,j,-1)
+
+
+            
+            for x in range(self.x):
+                for y in range(self.y):
+                    for direction in range(4):
+                        self.one_overlay_target_list(val[1],direction,x,y,-1)
 
 
             for coord in val[2]:
                 self.prob_tot[coord[0]][coord[1]]=-np.inf
                 self.target_list[coord[0]][coord[1]]=-np.inf
             self.ship_sunk+=1
+        for i in range(self.x): print(self.target_list[i])
          
 
     def exit(self):
